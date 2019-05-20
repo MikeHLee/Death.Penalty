@@ -1,0 +1,368 @@
+---
+title: "Death Penalty Analysis"
+output: html_notebook
+---
+
+Load and prepare dataset
+```{r}
+load("~/Documents/Coding/Data/MLDeathPenalty.rdata") #load dataset
+
+head(DeathPenalty) #examine dataset
+nrow(DeathPenalty) #size of dataset
+
+DeathPenalty$death = as.factor(DeathPenalty$death) #convert numerics to factors
+DeathPenalty$gender = as.factor(DeathPenalty$gender)
+DeathPenalty$education = as.factor(DeathPenalty$education)
+DeathPenalty$birthplace = as.factor(DeathPenalty$birthplace)
+DeathPenalty$white = as.factor(DeathPenalty$white)
+DeathPenalty$black = as.factor(DeathPenalty$black)
+DeathPenalty$hisp = as.factor(DeathPenalty$hisp)
+DeathPenalty$working = as.factor(DeathPenalty$working)
+DeathPenalty$alcoholhistory = as.factor(DeathPenalty$alcoholhistory)
+DeathPenalty$drugshistory = as.factor(DeathPenalty$drugshistory)
+DeathPenalty$retarded = as.factor(DeathPenalty$retarded)
+DeathPenalty$mentalhistory = as.factor(DeathPenalty$mentalhistory)
+DeathPenalty$vmale = as.factor(DeathPenalty$vmale)
+DeathPenalty$vwhite = as.factor(DeathPenalty$vwhite)
+DeathPenalty$vblack = as.factor(DeathPenalty$vblack)
+DeathPenalty$vhisp = as.factor(DeathPenalty$vhisp)
+DeathPenalty$bktorture = as.factor(DeathPenalty$bktorture)
+DeathPenalty$bkhostage = as.factor(DeathPenalty$bkhostage)
+DeathPenalty$bkbeaten = as.factor(DeathPenalty$bkbeaten)
+DeathPenalty$bkplead = as.factor(DeathPenalty$bkplead)
+DeathPenalty$bksexassault = as.factor(DeathPenalty$bksexassault)
+DeathPenalty = DeathPenalty[,-22] #remove duplicate bkplead
+DeathPenalty$autogun = as.factor(DeathPenalty$autogun)
+DeathPenalty$handgun = as.factor(DeathPenalty$handgun)
+DeathPenalty$residence = as.factor(DeathPenalty$residence)
+DeathPenalty$vehicle = as.factor(DeathPenalty$vehicle)
+DeathPenalty$business = as.factor(DeathPenalty$business)
+DeathPenalty$store = as.factor(DeathPenalty$store)
+DeathPenalty$stranger = as.factor(DeathPenalty$stranger)
+DeathPenalty$rival = as.factor(DeathPenalty$rival)
+
+na.indicies = which(is.na(DeathPenalty[,1]), arr.ind=TRUE)
+row.na.indicies = unique(na.indicies) #which rows have NA for the response?
+
+DeathPenalty = DeathPenalty[-row.na.indicies,] #remove rows with NAs from the dataframe
+
+anyNA(DeathPenalty[,1]) #check 
+nrow(DeathPenalty) #new size of dataset
+head(DeathPenalty) #examine dataset
+
+```
+
+Univariate statistics
+```{r}
+plot(DeathPenalty$death, main = "Death Penalty = 1")
+plot(DeathPenalty$gender, main = "Gender 1=male 0=female")
+plot(DeathPenalty$white, main = "White = 1, other = 0")
+plot(DeathPenalty$black, main = "Black = 2, other = 0")
+plot(DeathPenalty$hisp, main = "Hispanic = 3, other = 0")
+plot(DeathPenalty$education, main = "Edu: hs,ps,college grad =1, nohigh school = 2, unknown = 3")
+plot(DeathPenalty$birthplace, main = "Birthplace US = 1")
+plot(DeathPenalty$working, main = "Working = 1, unemp = 0")
+plot(DeathPenalty$alcoholhistory, main = "drinking problem = 1")
+plot(DeathPenalty$drugshistory, main = "drug history = 1")
+plot(DeathPenalty$retarded, main = "retarded = 1")
+plot(DeathPenalty$mentalhistory, main = "history mental illness = 1")
+plot(DeathPenalty$vmale, main = "victim male = 1")
+plot(DeathPenalty$vwhite, main = "victim white = 1")
+plot(DeathPenalty$vblack, main = "victim black = 1")
+plot(DeathPenalty$vhisp, main = "victim hispanic = 1")
+plot(DeathPenalty$bktorture, main = "victim tortured = 1")
+plot(DeathPenalty$bkhostage, main = "victim held hostage = 1")
+plot(DeathPenalty$bkbeaten, main = "victim beaten = 1")
+plot(DeathPenalty$bkplead, main = "victim plead for mercy = 1")
+plot(DeathPenalty$bksexassault, main = "victim sexually assaulted = 1")
+plot(DeathPenalty$numbervictim, main = "number of homicide victims")
+plot(DeathPenalty$autogun, main = "automatic weapon used = 1")
+plot(DeathPenalty$handgun, main = "handgun used = 1")
+plot(DeathPenalty$residence, main = "victim killed in residence = 1")
+plot(DeathPenalty$vehicle, main = "victim killed in vehicle = 1")
+plot(DeathPenalty$business, main = "victim killed in their business = 1")
+plot(DeathPenalty$store, main = "victim killed in their store = 1 ")
+plot(DeathPenalty$stranger, main = "defendant & victim strangers = 1")
+plot(DeathPenalty$rival, main= "defendant & victim rivals = 1")
+
+```
+
+Bivariate Statistics
+```{r}
+plot(DeathPenalty$gender , DeathPenalty$death, xlab = "Gender", ylab = "Death Y/N")
+plot(DeathPenalty$white , DeathPenalty$death, xlab = "Race = White", ylab = "Death Y/N")
+plot(DeathPenalty$black , DeathPenalty$death, xlab = "Race = Black", ylab = "Death Y/N")
+plot(DeathPenalty$hisp , DeathPenalty$death, xlab = "Race = Hispanic", ylab = "Death Y/N")
+plot(DeathPenalty$education , DeathPenalty$death, xlab = "Education Level", ylab = "Death Y/N")
+plot(DeathPenalty$birthplace , DeathPenalty$death, xlab = "Birthplace", ylab = "Death Y/N")
+plot(DeathPenalty$vmale , DeathPenalty$death, xlab = "Victim Gender", ylab = "Death Y/N")
+plot(DeathPenalty$vwhite , DeathPenalty$death, xlab = "Victim White", ylab = "Death Y/N")
+plot(DeathPenalty$vblack , DeathPenalty$death, xlab = "Victim Black", ylab = "Death Y/N")
+plot(DeathPenalty$vhisp , DeathPenalty$death, xlab = "Victim Hispanic", ylab = "Death Y/N")
+```
+
+Split the data into training, evaluation, and test sets:
+```{r}
+
+DeathPenalty.split = split(DeathPenalty, rep(1:3, length.out = nrow(DeathPenalty), 
+                        each = ceiling(nrow(DeathPenalty)/3))) #split the data
+
+DeathPenalty.train = as.data.frame(DeathPenalty.split[1]) #save as new data frames
+DeathPenalty.eval = as.data.frame(DeathPenalty.split[2])
+DeathPenalty.test = as.data.frame(DeathPenalty.split[3])
+
+colnames(DeathPenalty.train) = colnames(DeathPenalty) #Change column names to match
+colnames(DeathPenalty.eval) = colnames(DeathPenalty)
+colnames(DeathPenalty.test) = colnames(DeathPenalty)
+
+nrow(DeathPenalty) #check for completeness
+nrow(DeathPenalty.train) + nrow(DeathPenalty.eval) + nrow(DeathPenalty.test)
+
+
+```
+
+Now let's fit many trees to pick the best one
+```{r}
+library(rpart)
+library(rpart.plot)
+
+misclass.rate.store = c() #create vector to store performance metrics
+
+objective.prior.death = sum(DeathPenalty[,1] == 1)/nrow(DeathPenalty) #calculate prior probabilities
+objective.prior.no_death = sum(DeathPenalty[,1] == 0)/nrow(DeathPenalty)
+adjusted.prior.death = objective.prior.death * 2
+adjusted.prior.no_death = objective.prior.no_death * 1
+normalized.prior.death =  adjusted.prior.death/(adjusted.prior.death + adjusted.prior.no_death)
+normalized.prior.no_death =  adjusted.prior.no_death/(adjusted.prior.death + adjusted.prior.no_death)
+
+cp.tune = c(.01,.02,.03,.04,.05) #possible value of the complexity parameter for tuning
+
+for(i in cp.tune){ #fit a tree for each value of cp
+  out = rpart(death ~ ., data = DeathPenalty.train, method = "class",
+            parms = list(prior = c(normalized.prior.death,normalized.prior.no_death)), cp = i)
+
+  prp(out, extra = 1, faclen = 10, varlen = 15, under = T,
+     box.col = c("red","lightblue")[out$frame$yval])
+
+  preds = predict(out, newdata = DeathPenalty.eval, type = "class") #predict values on the evaluation set
+
+  confusion.matrix = table("Observed Class" = DeathPenalty.eval$death, #confusion matrix
+                         "Predicted Class" = preds)[2:1, 2:1]        
+
+  print(confusion.matrix)
+
+  misclass.rate = (confusion.matrix[2,1] + confusion.matrix[1,2])/ #misclassification rate
+                (confusion.matrix[2,1] + confusion.matrix[1,2] + 
+                   confusion.matrix[1,1] + confusion.matrix[2,2])
+
+  print(misclass.rate)
+
+  misclass.rate.store = append(misclass.rate.store, misclass.rate)
+}
+
+which.min(misclass.rate.store) # = 1, so we select the first model to apply to the test data
+
+```
+
+Now let us perform our analysis on the test dataset, cross tabulate the results, and calculate errors:
+```{r}
+fit = rpart(death ~ ., data = DeathPenalty.train, method = "class",
+            parms = list(prior = c(normalized.prior.death, normalized.prior.no_death)), cp = .01)
+
+prp(fit, extra = 1, faclen = 10, varlen = 15, under = T,
+     box.col = c("red","lightblue")[out$frame$yval])
+
+fitted.values = predict(out, newdata = DeathPenalty.test, type = "class") #predict values on the test
+
+confusion.matrix.test = table("Observed Class" = DeathPenalty.test$death, #confusion matrix
+                         "Predicted Class" = fitted.values)[2:1, 2:1]
+
+print(confusion.matrix.test)
+
+#overall misclassification error
+misclass.rate = (confusion.matrix.test[2,1] + confusion.matrix.test[1,2])/ #misclassification rate
+                (confusion.matrix.test[2,1] + confusion.matrix.test[1,2] + 
+                   confusion.matrix.test[1,1] + confusion.matrix.test[2,2])
+
+print(misclass.rate)
+
+#use errors
+false.positive.use = confusion.matrix.test[2,1]/(confusion.matrix.test[2,1]+confusion.matrix.test[1,1])
+false.negative.use = confusion.matrix.test[1,2]/(confusion.matrix.test[1,2]+confusion.matrix.test[2,2])
+print(false.positive.use)
+print(false.negative.use)
+
+#model errors
+false.positive.model =  confusion.matrix.test[2,1]/(confusion.matrix.test[2,1]+confusion.matrix.test[2,2])
+false.negative.model = confusion.matrix.test[1,2]/(confusion.matrix.test[1,2]+confusion.matrix.test[1,1])
+print(false.positive.model)
+print(false.negative.model)
+
+```
+
+Now let's do the bootstrap to get a picture of the uncertainty of our estimates:
+```{r}
+
+stdError = function(x){ #define a fn for standard error
+  sd(x)/sqrt(length(x))}
+
+ind1 <- sample(nrow(DeathPenalty.test), size=nrow(DeathPenalty.test), replace=TRUE)
+x.boot1 <- DeathPenalty.test[ind1,]
+head(x.boot1)
+
+fitted.values.1 = predict(out, newdata = x.boot1, type = "class") #predict values on the test
+
+confusion.matrix.1 = table("Observed Class" = x.boot1$death, #confusion matrix
+                         "Predicted Class" = fitted.values.1)[2:1, 2:1]
+
+print(confusion.matrix.1)
+
+#overall misclassification error
+misclass.rate.1 = (confusion.matrix.1[2,1] + confusion.matrix.1[1,2])/ #misclassification rate
+                (confusion.matrix.1[2,1] + confusion.matrix.1[1,2] + 
+                   confusion.matrix.1[1,1] + confusion.matrix.1[2,2])
+
+print(misclass.rate.1)
+
+#use errors
+false.positive.use.1 = confusion.matrix.1[2,1]/(confusion.matrix.1[2,1]+confusion.matrix.1[1,1])
+false.negative.use.1 = confusion.matrix.1[1,2]/(confusion.matrix.1[1,2]+confusion.matrix.1[2,2])
+print(false.positive.use.1)
+print(false.negative.use.1)
+
+#model errors
+false.positive.model.1 =  confusion.matrix.1[2,1]/(confusion.matrix.1[2,1]+confusion.matrix.1[2,2])
+false.negative.model.1 = confusion.matrix.1[1,2]/(confusion.matrix.1[1,2]+confusion.matrix.1[1,1])
+print(false.positive.model.1)
+print(false.negative.model.1)
+
+
+ind2 <- sample(nrow(DeathPenalty.test), size=nrow(DeathPenalty.test), replace=TRUE)
+x.boot2 <- DeathPenalty.test[ind2,]
+head(x.boot2)
+
+fitted.values.2 = predict(out, newdata = x.boot2, type = "class") #predict values on the test
+
+confusion.matrix.2 = table("Observed Class" = x.boot2$death, #confusion matrix
+                         "Predicted Class" = fitted.values.2)[2:1, 2:1]
+
+print(confusion.matrix.2)
+
+#overall misclassification error
+misclass.rate.2 = (confusion.matrix.2[2,1] + confusion.matrix.2[1,2])/ #misclassification rate
+                (confusion.matrix.2[2,1] + confusion.matrix.2[1,2] + 
+                   confusion.matrix.2[1,1] + confusion.matrix.2[2,2])
+
+print(misclass.rate.2)
+
+#use errors
+false.positive.use.2 = confusion.matrix.2[2,1]/(confusion.matrix.2[2,1]+confusion.matrix.2[1,1])
+false.negative.use.2 = confusion.matrix.2[1,2]/(confusion.matrix.2[1,2]+confusion.matrix.2[2,2])
+print(false.positive.use.2)
+print(false.negative.use.2)
+
+#model errors
+false.positive.model.2 =  confusion.matrix.2[2,1]/(confusion.matrix.2[2,1]+confusion.matrix.2[2,2])
+false.negative.model.2 = confusion.matrix.2[1,2]/(confusion.matrix.2[1,2]+confusion.matrix.2[1,1])
+print(false.positive.model.2)
+print(false.negative.model.2)
+
+ind3 <- sample(nrow(DeathPenalty.test), size=nrow(DeathPenalty.test), replace=TRUE)
+x.boot3 <- DeathPenalty.test[ind3,]
+head(x.boot3)
+
+fitted.values.3 = predict(out, newdata = x.boot3, type = "class") #predict values on the test
+
+confusion.matrix.3 = table("Observed Class" = x.boot3$death, #confusion matrix
+                         "Predicted Class" = fitted.values.3)[2:1, 2:1]
+
+print(confusion.matrix.3)
+
+#overall misclassification error
+misclass.rate.3 = (confusion.matrix.3[2,1] + confusion.matrix.3[1,2])/ #misclassification rate
+                (confusion.matrix.3[2,1] + confusion.matrix.3[1,2] + 
+                   confusion.matrix.3[1,1] + confusion.matrix.3[2,2])
+
+print(misclass.rate.3)
+
+#use errors
+false.positive.use.3 = confusion.matrix.3[2,1]/(confusion.matrix.3[2,1]+confusion.matrix.3[1,1])
+false.negative.use.3 = confusion.matrix.3[1,2]/(confusion.matrix.3[1,2]+confusion.matrix.3[2,2])
+print(false.positive.use.3)
+print(false.negative.use.3)
+
+#model errors
+false.positive.model.3 =  confusion.matrix.3[2,1]/(confusion.matrix.3[2,1]+confusion.matrix.3[2,2])
+false.negative.model.3 = confusion.matrix.3[1,2]/(confusion.matrix.3[1,2]+confusion.matrix.3[1,1])
+print(false.positive.model.3)
+print(false.negative.model.3)
+
+
+ind4 <- sample(nrow(DeathPenalty.test), size=nrow(DeathPenalty.test), replace=TRUE)
+x.boot4 <- DeathPenalty.test[ind4,]
+head(x.boot4)
+
+fitted.values.4 = predict(out, newdata = x.boot4, type = "class") #predict values on the test
+
+confusion.matrix.4 = table("Observed Class" = x.boot4$death, #confusion matrix
+                         "Predicted Class" = fitted.values.4)[2:1, 2:1]
+
+print(confusion.matrix.4)
+
+#overall misclassification error
+misclass.rate.4 = (confusion.matrix.4[2,1] + confusion.matrix.4[1,2])/ #misclassification rate
+                (confusion.matrix.4[2,1] + confusion.matrix.4[1,2] + 
+                   confusion.matrix.4[1,1] + confusion.matrix.4[2,2])
+
+print(misclass.rate.4)
+
+#use errors
+false.positive.use.4 = confusion.matrix.4[2,1]/(confusion.matrix.4[2,1]+confusion.matrix.4[1,1])
+false.negative.use.4 = confusion.matrix.4[1,2]/(confusion.matrix.4[1,2]+confusion.matrix.4[2,2])
+print(false.positive.use.4)
+print(false.negative.use.4)
+
+#model errors
+false.positive.model.4 =  confusion.matrix.4[2,1]/(confusion.matrix.4[2,1]+confusion.matrix.4[2,2])
+false.negative.model.4 = confusion.matrix.4[1,2]/(confusion.matrix.4[1,2]+confusion.matrix.4[1,1])
+print(false.positive.model.4)
+print(false.negative.model.4)
+
+
+ind5 <- sample(nrow(DeathPenalty.test), size=nrow(DeathPenalty.test), replace=TRUE)
+x.boot5 <- DeathPenalty.test[ind5,]
+head(x.boot5)
+
+fitted.values.5 = predict(out, newdata = x.boot5, type = "class") #predict values on the test
+
+confusion.matrix.5 = table("Observed Class" = x.boot5$death, #confusion matrix
+                         "Predicted Class" = fitted.values.5)[2:1, 2:1]
+
+print(confusion.matrix.5)
+
+#overall misclassification error
+misclass.rate.5 = (confusion.matrix.5[2,1] + confusion.matrix.5[1,2])/ #misclassification rate
+                (confusion.matrix.5[2,1] + confusion.matrix.5[1,2] + 
+                   confusion.matrix.5[1,1] + confusion.matrix.5[2,2])
+
+print(misclass.rate.5)
+
+#use errors
+false.positive.use.5 = confusion.matrix.5[2,1]/(confusion.matrix.5[2,1]+confusion.matrix.5[1,1])
+false.negative.use.5 = confusion.matrix.5[1,2]/(confusion.matrix.5[1,2]+confusion.matrix.5[2,2])
+print(false.positive.use.5)
+print(false.negative.use.5)
+
+#model errors
+false.positive.model.5 =  confusion.matrix.5[2,1]/(confusion.matrix.5[2,1]+confusion.matrix.5[2,2])
+false.negative.model.5 = confusion.matrix.5[1,2]/(confusion.matrix.5[1,2]+confusion.matrix.5[1,1])
+print(false.positive.model.5)
+print(false.negative.model.5)
+
+stdError(c(misclass.rate.1,misclass.rate.2,misclass.rate.3,misclass.rate.4,misclass.rate.5))
+stdError(c(false.positive.use.1, false.positive.use.2, false.positive.use.3, false.positive.use.4, false.positive.use.5))
+stdError(c(false.negative.use.1,false.negative.use.2,false.negative.use.3,false.negative.use.4,false.negative.use.5))
+stdError(c(false.positive.model.1, false.positive.model.2, false.positive.model.3, false.positive.model.4, false.positive.model.5))
+stdError(c(false.negative.model.1, false.negative.model.2, false.negative.model.3, false.negative.model.4, false.negative.model.5))
+```
+
